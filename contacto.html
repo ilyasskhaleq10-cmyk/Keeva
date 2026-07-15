@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contacto — KEEVA</title>
+  <meta name="description" content="Cuéntanos sobre tu equipo comercial y te contactamos para configurar KEEVA.">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="robots" content="noindex">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       TOKENS — copiados de index.html para mantener
+       coherencia visual con la landing
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --blue-900: #1a237e;
+      --blue-700: #303f9f;
+      --blue-600: #3949ab;
+      --blue-50: #e8eaf6;
+
+      --gray-900: #111827;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50: #f9fafb;
+      --white: #ffffff;
+
+      --text-heading: var(--blue-900);
+      --text-body: var(--gray-600);
+      --text-muted: var(--gray-400);
+      --border: var(--gray-200);
+      --brand: var(--blue-600);
+      --brand-hover: var(--blue-700);
+      --brand-subtle: var(--blue-50);
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+      --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+      --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+      --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+
+      --radius-sm: 6px; --radius-md: 8px; --radius-lg: 12px; --radius-xl: 16px;
+
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background: var(--white);
+      color: var(--text-body);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a { color: var(--brand); text-decoration: none; transition: color var(--duration-fast) ease; }
+    a:hover { color: var(--brand-hover); }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 var(--space-6); }
+
+    /* NAV — igual que en index.html */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      padding: var(--space-4) 0;
+      transition: all 400ms var(--ease-out);
+    }
+    .nav.scrolled {
+      padding: var(--space-3) 0;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav .container { display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-weight: 700; font-size: 1.25rem; letter-spacing: -0.02em; color: var(--blue-900); }
+    .nav-back {
+      font-family: var(--font-sans); font-weight: 500; font-size: 0.875rem;
+      color: var(--gray-700);
+    }
+
+    /* HEADER de la página de contacto */
+    .contact-header {
+      padding: var(--space-24) var(--space-6) var(--space-10);
+      text-align: center;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem; font-weight: 500; color: var(--brand);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: var(--space-4);
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text-heading);
+      margin-bottom: var(--space-5);
+    }
+    .section-subtitle {
+      font-size: 1.0625rem;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.75;
+    }
+
+    /* FORM CARD */
+    .contact-wrap {
+      max-width: 620px;
+      margin: 0 auto var(--space-24);
+      padding: 0 var(--space-6);
+    }
+    .contact-card {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-lg);
+      padding: var(--space-10);
+    }
+    .field { margin-bottom: var(--space-5); }
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-4); }
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: var(--space-2);
+    }
+    label .optional { font-weight: 400; color: var(--text-muted); }
+    input, textarea {
+      width: 100%;
+      font-family: var(--font-sans);
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+      background: var(--gray-50);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-3) var(--space-4);
+      transition: border-color var(--duration-fast) ease, background var(--duration-fast) ease;
+    }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      background: var(--white);
+    }
+    textarea { resize: vertical; min-height: 120px; }
+
+    /* Honeypot anti-spam — invisible para personas */
+    .hp-field { position: absolute; left: -9999px; top: -9999px; }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      width: 100%;
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-md);
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      transition: all var(--duration-normal) ease;
+      line-height: 1.5;
+    }
+    .btn-primary:hover { background: var(--brand-hover); box-shadow: var(--shadow-md); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    .form-note {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: var(--space-4);
+    }
+    .form-note a { color: var(--gray-600); text-decoration: underline; }
+
+    .alert {
+      display: none;
+      border-radius: var(--radius-md);
+      padding: var(--space-4);
+      font-size: 0.9375rem;
+      margin-bottom: var(--space-5);
+    }
+    .alert.show { display: block; }
+    .alert-success { background: var(--success-bg); color: var(--success); }
+    .alert-error { background: var(--danger-bg); color: var(--danger); }
+
+    /* FOOTER */
+    .footer { border-top: 1px solid var(--border); padding: var(--space-8) 0; margin-top: var(--space-16); }
+    .footer .container { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-4); }
+    .footer-text { font-size: 0.8125rem; color: var(--text-muted); }
+
+    @media (max-width: 640px) {
+      .field-row { grid-template-columns: 1fr; }
+      .contact-card { padding: var(--space-6); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="mainNav">
+    <div class="container">
+      <a href="index.html" class="nav-logo">KEEVA</a>
+      <a href="index.html" class="nav-back">← Volver a la web</a>
+    </div>
+  </nav>
+
+  <section class="contact-header">
+    <div class="section-label">Contacto</div>
+    <h1 class="section-title">Hablemos de tu equipo comercial</h1>
+    <p class="section-subtitle mx-auto">Cuéntanos cómo trabaja tu equipo y te contactamos para configurar KEEVA contigo.</p>
+  </section>
+
+  <div class="contact-wrap">
+    <div class="contact-card">
+
+      <div class="alert alert-success" id="alertSuccess">
+        ✓ Mensaje enviado. Te responderemos en menos de 24h.
+      </div>
+      <div class="alert alert-error" id="alertError">
+        No hemos podido enviar tu mensaje. Escríbenos directamente a <a href="mailto:info@keeva.es">info@keeva.es</a>.
+      </div>
+
+      <form id="contactForm" novalidate target="hidden_iframe" method="POST" action="https://script.google.com/macros/s/AKfycbyzzo89MV7F0IofuKXxGfh5Cxer3ojvsLtXyBLtmjCHbuqiWg8GVytiZ51UpPkYnse-3A/exec">
+        <div class="field-row">
+          <div class="field">
+            <label for="nombre">Nombre completo</label>
+            <input type="text" id="nombre" name="nombre" required autocomplete="name">
+          </div>
+          <div class="field">
+            <label for="empresa">Empresa <span class="optional">(opcional)</span></label>
+            <input type="text" id="empresa" name="empresa" autocomplete="organization">
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required autocomplete="email">
+          </div>
+          <div class="field">
+            <label for="telefono">Teléfono <span class="optional">(opcional)</span></label>
+            <input type="tel" id="telefono" name="telefono" autocomplete="tel">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="mensaje">Mensaje</label>
+          <textarea id="mensaje" name="mensaje" required placeholder="Cuéntanos cuántos comerciales tenéis, qué canales usáis (email, CRM...) y qué te gustaría conseguir con KEEVA."></textarea>
+        </div>
+
+        <input type="hidden" name="origen" value="landing keeva.es">
+
+        <!-- Honeypot: campo invisible para humanos, los bots lo suelen rellenar -->
+        <div class="field hp-field" aria-hidden="true">
+          <label for="website">No rellenar</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+
+        <button type="submit" class="btn-primary" id="submitBtn">Enviar mensaje</button>
+        <p class="form-note">O escríbenos directamente a <a href="mailto:info@keeva.es">info@keeva.es</a></p>
+      </form>
+
+      <!-- Iframe oculto: el formulario se envía aquí dentro, así evitamos problemas de CORS con Apps Script -->
+      <iframe name="hidden_iframe" id="hiddenIframe" style="display:none;"></iframe>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-text">© 2026 KEEVA. Todos los derechos reservados.</div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      // ─────────── Nav scroll effect ───────────
+      const nav = document.getElementById('mainNav');
+      window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20), { passive: true });
+
+      // ─────────── Envío del formulario (Google Apps Script, sin servidor) ───────────
+      // El formulario hace un POST normal (no fetch) dentro de un iframe oculto.
+      // Esto evita por completo los problemas de CORS de Apps Script.
+      const form = document.getElementById('contactForm');
+      const submitBtn = document.getElementById('submitBtn');
+      const alertSuccess = document.getElementById('alertSuccess');
+      const alertError = document.getElementById('alertError');
+      const hiddenIframe = document.getElementById('hiddenIframe');
+
+      let justSubmitted = false;
+
+      form.addEventListener('submit', (e) => {
+        alertSuccess.classList.remove('show');
+        alertError.classList.remove('show');
+
+        // Honeypot: si un bot ha rellenado este campo, no enviamos nada de verdad
+        if (form.website.value) {
+          e.preventDefault();
+          form.reset();
+          alertSuccess.classList.add('show');
+          return;
+        }
+
+        // Validación mínima del email (el resto ya usa "required" del navegador)
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.value.trim());
+        if (!emailOk) {
+          e.preventDefault();
+          alertError.textContent = 'Revisa el email, no parece válido.';
+          alertError.classList.add('show');
+          return;
+        }
+
+        justSubmitted = true;
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Enviando...';
+        // El formulario continúa su envío normal hacia el iframe oculto
+      });
+
+      // El iframe también carga una vez al abrir la página (vacío), por eso
+      // solo mostramos el mensaje de éxito si justSubmitted está activo.
+      hiddenIframe.addEventListener('load', () => {
+        if (!justSubmitted) return;
+        justSubmitted = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Enviar mensaje';
+        alertSuccess.classList.add('show');
+        form.reset();
+      });
+    })();
+  </script>
+</body>
+</html>

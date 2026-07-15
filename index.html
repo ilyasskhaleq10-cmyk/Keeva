@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KEEVA — Cuando tu comercial no está, su cuota sigue en pie</title>
+  <meta name="description" content="KEEVA es la IA que aprende cómo trabaja cada comercial y actúa en su nombre durante vacaciones o bajas. La cuota del año no cae.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ═══════════════════════════════════════════
+       1. RESET & DESIGN TOKENS
+    ═══════════════════════════════════════════ */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Brand colors — extracted from PDF */
+      --blue-900: #1a237e;
+      --blue-800: #283593;
+      --blue-700: #303f9f;
+      --blue-600: #3949ab;
+      --blue-500: #3f51b5;
+      --blue-400: #5c6bc0;
+      --blue-300: #7986cb;
+      --blue-200: #9fa8da;
+      --blue-100: #c5cae9;
+      --blue-50: #e8eaf6;
+
+      /* Neutrals */
+      --gray-900: #111827;
+      --gray-800: #1f2937;
+      --gray-700: #374151;
+      --gray-600: #4b5563;
+      --gray-500: #6b7280;
+      --gray-400: #9ca3af;
+      --gray-300: #d1d5db;
+      --gray-200: #e5e7eb;
+      --gray-100: #f3f4f6;
+      --gray-50: #f9fafb;
+      --white: #ffffff;
+
+      /* Semantic */
+      --text-heading: var(--blue-900);
+      --text-body: var(--gray-600);
+      --text-muted: var(--gray-400);
+      --border: var(--gray-200);
+      --border-subtle: var(--gray-100);
+      --surface: var(--white);
+      --surface-raised: var(--white);
+      --surface-subtle: var(--gray-50);
+      --surface-inset: var(--gray-100);
+      --brand: var(--blue-600);
+      --brand-hover: var(--blue-700);
+      --brand-subtle: var(--blue-50);
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', 'Fira Code', monospace;
+
+      /* Spacing scale */
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 20px;
+      --space-6: 24px;
+      --space-8: 32px;
+      --space-10: 40px;
+      --space-12: 48px;
+      --space-16: 64px;
+      --space-20: 80px;
+      --space-24: 96px;
+      --space-32: 128px;
+
+      /* Radii */
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+
+      /* Shadows — very subtle, Linear/Stripe style */
+      --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.08);
+      --shadow-xl: 0 16px 48px rgba(0,0,0,0.08);
+
+      /* Transitions */
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+      --duration-fast: 150ms;
+      --duration-normal: 250ms;
+      --duration-slow: 400ms;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--white);
+      color: var(--text-body);
+      overflow-x: hidden;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    }
+
+    a { color: var(--brand); text-decoration: none; transition: color var(--duration-fast) ease; }
+    a:hover { color: var(--brand-hover); }
+    img { max-width: 100%; display: block; }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 var(--space-6);
+    }
+
+    /* ═══════════════════════════════════════════
+       2. NAVIGATION
+    ═══════════════════════════════════════════ */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: var(--space-4) 0;
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .nav.scrolled {
+      padding: var(--space-3) 0;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: 1.25rem;
+      letter-spacing: -0.02em;
+      color: var(--blue-900);
+    }
+    .nav-cta {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-md);
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      transition: all var(--duration-normal) ease;
+      line-height: 1.5;
+    }
+    .nav-cta:hover {
+      background: var(--brand-hover);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* ═══════════════════════════════════════════
+       3. HERO
+    ═══════════════════════════════════════════ */
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-32) var(--space-6) var(--space-20);
+      text-align: center;
+      overflow: hidden;
+      background: var(--white);
+    }
+
+    /* Subtle geometric background — not orbs/glows */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .hero-bg-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--gray-100) 1px, transparent 1px),
+        linear-gradient(90deg, var(--gray-100) 1px, transparent 1px);
+      background-size: 64px 64px;
+      opacity: 0.5;
+      mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+    }
+    .hero-bg-glow {
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 500px;
+      background: radial-gradient(ellipse, rgba(63, 81, 181, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) var(--space-4);
+      border-radius: 100px;
+      background: var(--brand-subtle);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--brand);
+      margin-bottom: var(--space-8);
+      border: 1px solid var(--blue-100);
+    }
+    .hero-badge .badge-pulse {
+      width: 6px; height: 6px;
+      background: var(--brand);
+      border-radius: 50%;
+    }
+
+    .hero-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: clamp(2.5rem, 5.5vw, 4rem);
+      line-height: 1.1;
+      color: var(--text-heading);
+      max-width: 720px;
+      letter-spacing: -0.035em;
+      margin-bottom: var(--space-6);
+    }
+    .hero-title .highlight {
+      color: var(--brand);
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.6vw, 1.2rem);
+      color: var(--text-body);
+      max-width: 540px;
+      margin-bottom: var(--space-10);
+      line-height: 1.75;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-20);
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-md);
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      transition: all var(--duration-normal) ease;
+      line-height: 1.5;
+    }
+    .btn-primary:hover {
+      background: var(--brand-hover);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn-secondary {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.9375rem;
+      padding: var(--space-3) var(--space-6);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      color: var(--gray-700);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--duration-normal) ease;
+      line-height: 1.5;
+    }
+    .btn-secondary:hover {
+      border-color: var(--gray-300);
+      background: var(--gray-50);
+    }
+
+    /* ═══════════════════════════════════════════
+       4. INTERACTIVE CHART
+    ═══════════════════════════════════════════ */
+    .chart-wrapper {
+      position: relative;
+      width: 100%;
+      max-width: 780px;
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .chart-title {
+      font-weight: 600;
+      font-size: 0.9375rem;
+      color: var(--gray-900);
+    }
+
+    /* Toggle switch */
+    .toggle-container {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      user-select: none;
+    }
+    .toggle-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      transition: color var(--duration-normal) ease;
+    }
+    .toggle-label.active { color: var(--gray-900); }
+
+    .toggle-track {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: var(--gray-200);
+      border-radius: 12px;
+      cursor: pointer;
+      border: none;
+      transition: background var(--duration-normal) ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .toggle-track.on {
+      background: var(--brand);
+    }
+    .toggle-thumb {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: var(--white);
+      border-radius: 50%;
+      transition: left var(--duration-normal) var(--ease-out);
+      pointer-events: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .toggle-track.on .toggle-thumb {
+      left: 22px;
+    }
+
+    .chart-canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 8;
+      margin-bottom: var(--space-4);
+    }
+    #quotaChart {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: var(--space-5);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--gray-500);
+    }
+    .chart-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .chart-legend-dot.teal { background: var(--brand); }
+    .chart-legend-dot.rose { background: var(--danger); }
+    .chart-legend-dot.amber { background: var(--gray-300); }
+
+    .chart-stats {
+      display: flex;
+      gap: var(--space-8);
+      justify-content: center;
+      margin-top: var(--space-5);
+      flex-wrap: wrap;
+    }
+    .chart-stat {
+      text-align: center;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .chart-stat.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .chart-stat-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+    .chart-stat-value.loss { color: var(--danger); }
+    .chart-stat-value.safe { color: var(--success); }
+    .chart-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: var(--space-1);
+    }
+
+    /* ═══════════════════════════════════════════
+       5. SECTIONS — SHARED
+    ═══════════════════════════════════════════ */
+    .section {
+      padding: var(--space-24) 0;
+    }
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-4);
+    }
+    .section-title {
+      font-family: var(--font-sans);
+      font-weight: 700;
+      font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      color: var(--text-heading);
+      margin-bottom: var(--space-5);
+    }
+    .section-subtitle {
+      font-size: 1.0625rem;
+      color: var(--text-body);
+      max-width: 560px;
+      line-height: 1.75;
+      margin-bottom: var(--space-16);
+    }
+
+    /* ═══════════════════════════════════════════
+       6. PROBLEM SECTION
+    ═══════════════════════════════════════════ */
+    .problem-section {
+      background: var(--surface-subtle);
+    }
+
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-4);
+    }
+
+    .problem-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-8);
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .problem-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--gray-300);
+    }
+
+    .problem-icon {
+      width: 40px; height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--radius-md);
+      background: var(--brand-subtle);
+      margin-bottom: var(--space-5);
+      font-size: 1.1rem;
+      color: var(--brand);
+    }
+
+    .problem-card h3 {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+      letter-spacing: -0.01em;
+    }
+    .problem-card p {
+      color: var(--text-body);
+      font-size: 0.9375rem;
+      line-height: 1.65;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+    }
+    .reveal.from-left { transform: translateX(-24px); }
+    .reveal.from-right { transform: translateX(24px); }
+    .reveal.scale-in { transform: scale(0.97); opacity: 0; }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ═══════════════════════════════════════════
+       7. HOW IT WORKS — TIMELINE
+    ═══════════════════════════════════════════ */
+    .timeline {
+      position: relative;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .timeline-line {
+      position: absolute;
+      left: 15px;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: var(--border);
+    }
+    .timeline-progress {
+      position: absolute;
+      left: 15px;
+      top: 0;
+      width: 1px;
+      height: 0;
+      background: var(--brand);
+      transition: height 0.1s linear;
+    }
+
+    .timeline-step {
+      position: relative;
+      padding-left: 52px;
+      padding-bottom: var(--space-12);
+    }
+    .timeline-step:last-child { padding-bottom: 0; }
+
+    .timeline-node {
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--white);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--duration-slow) var(--ease-out);
+      z-index: 2;
+    }
+    .timeline-node-inner {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gray-300);
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .timeline-step.active .timeline-node {
+      border-color: var(--brand);
+      background: var(--white);
+    }
+    .timeline-step.active .timeline-node-inner {
+      background: var(--brand);
+    }
+
+    .timeline-step-number {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--brand);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+      opacity: 0.5;
+      transition: opacity var(--duration-slow) ease;
+    }
+    .timeline-step.active .timeline-step-number { opacity: 1; }
+
+    .timeline-step h3 {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--text-heading);
+      margin-bottom: var(--space-2);
+      letter-spacing: -0.01em;
+      transition: color var(--duration-slow) ease;
+    }
+    .timeline-step:not(.active) h3 { color: var(--gray-400); }
+
+    .timeline-step p {
+      color: var(--text-body);
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      transition: color var(--duration-slow) ease;
+    }
+    .timeline-step:not(.active) p { color: var(--gray-400); }
+
+    /* ═══════════════════════════════════════════
+       8. LIVE DEMO
+    ═══════════════════════════════════════════ */
+    .demo-section {
+      background: var(--surface-subtle);
+    }
+
+    .demo-window {
+      max-width: 640px;
+      margin: 0 auto;
+      background: var(--surface);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+    }
+
+    .demo-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: var(--space-3) var(--space-5);
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+    }
+    .demo-dot:nth-child(1) { background: #ef4444; }
+    .demo-dot:nth-child(2) { background: #f59e0b; }
+    .demo-dot:nth-child(3) { background: #22c55e; }
+    .demo-titlebar-text {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .demo-status {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-3) var(--space-5);
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-status-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brand);
+    }
+    .demo-status-dot.green { background: var(--success); }
+    .demo-status-text {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--brand);
+      transition: color var(--duration-normal) ease;
+    }
+    .demo-status-text.green { color: var(--success); }
+
+    .demo-meta {
+      padding: var(--space-4) var(--space-5);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .demo-meta-row {
+      display: flex;
+      gap: var(--space-3);
+      font-size: 0.8125rem;
+    }
+    .demo-meta-label {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      min-width: 36px;
+    }
+    .demo-meta-value { color: var(--text-body); }
+
+    .demo-body {
+      padding: var(--space-5);
+      min-height: 160px;
+      font-size: 0.9375rem;
+      line-height: 1.7;
+      color: var(--gray-800);
+    }
+    .demo-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 1em;
+      background: var(--brand);
+      vertical-align: text-bottom;
+    }
+
+    .demo-footer {
+      padding: var(--space-3) var(--space-5);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--gray-50);
+    }
+    .demo-ai-badge {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-sm);
+      background: var(--brand-subtle);
+      border: 1px solid var(--blue-100);
+      color: var(--brand);
+      letter-spacing: 0.02em;
+    }
+    .demo-approve-btn {
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.8125rem;
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-md);
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .demo-approve-btn.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .demo-approve-btn:hover {
+      background: var(--brand-hover);
+    }
+
+    /* ═══════════════════════════════════════════
+       9. CASE STUDY
+    ═══════════════════════════════════════════ */
+    .case-section {
+      padding: var(--space-24) 0;
+    }
+
+    .case-card-container {
+      perspective: 1200px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .case-card {
+      position: relative;
+      background: var(--blue-900);
+      border-radius: var(--radius-xl);
+      padding: var(--space-12);
+      color: var(--white);
+      transform-style: preserve-3d;
+      transition: transform var(--duration-fast) ease-out, box-shadow var(--duration-normal) ease;
+      will-change: transform;
+      overflow: hidden;
+    }
+    .case-card:hover {
+      box-shadow: var(--shadow-xl);
+    }
+
+    .case-card-shine {
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      background: radial-gradient(circle at var(--shine-x, 50%) var(--shine-y, 50%), rgba(255,255,255,0.05) 0%, transparent 50%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--duration-normal) ease;
+    }
+    .case-card:hover .case-card-shine { opacity: 1; }
+
+    .case-eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--blue-200);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .case-eyebrow::before {
+      content: '';
+      width: 4px; height: 4px;
+      background: var(--blue-200);
+      border-radius: 50%;
+    }
+
+    .case-card h3 {
+      font-weight: 700;
+      font-size: clamp(1.4rem, 2.5vw, 1.875rem);
+      line-height: 1.2;
+      letter-spacing: -0.02em;
+      margin-bottom: var(--space-6);
+      color: var(--white);
+    }
+    .case-amount {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--blue-100);
+    }
+
+    .case-body {
+      color: var(--blue-200);
+      font-size: 0.9375rem;
+      line-height: 1.75;
+      margin-bottom: var(--space-10);
+      max-width: 600px;
+    }
+
+    .case-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+    }
+    .case-metric {
+      text-align: center;
+      padding: var(--space-5);
+      background: rgba(255,255,255,0.06);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(255,255,255,0.08);
+      transform: translateZ(20px);
+    }
+    .case-metric-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 1.5rem;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+    .case-metric-label {
+      font-size: 0.75rem;
+      color: var(--blue-300);
+      margin-top: var(--space-1);
+    }
+
+    .case-card.unfold-init {
+      clip-path: inset(45% 0 45% 0);
+      opacity: 0;
+    }
+    .case-card.unfold-animate {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+      transition: clip-path 0.7s var(--ease-out), opacity 0.5s ease;
+    }
+
+    /* ═══════════════════════════════════════════
+       10. PRICING
+    ═══════════════════════════════════════════ */
+    .pricing-section {
+      background: var(--surface-subtle);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      transition: all var(--duration-slow) var(--ease-out);
+    }
+    .pricing-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+    .pricing-card.featured {
+      border-color: var(--brand);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-mono);
+      font-size: 0.625rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: var(--space-1) var(--space-3);
+      border-radius: 100px;
+      background: var(--brand);
+      color: var(--white);
+      white-space: nowrap;
+    }
+
+    .pricing-name {
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--gray-900);
+      margin-bottom: var(--space-2);
+    }
+    .pricing-desc {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-6);
+      line-height: 1.5;
+    }
+
+    .pricing-price {
+      display: flex;
+      align-items: baseline;
+      gap: 2px;
+      margin-bottom: var(--space-1);
+    }
+    .pricing-currency {
+      font-family: var(--font-mono);
+      font-size: 1rem;
+      color: var(--gray-500);
+    }
+    .pricing-amount {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 2.5rem;
+      letter-spacing: -0.03em;
+      color: var(--gray-900);
+    }
+    .pricing-card.featured .pricing-amount { color: var(--brand); }
+    .pricing-period {
+      font-family: var(--font-mono);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .pricing-period-text {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-bottom: var(--space-6);
+    }
+
+    .pricing-features {
+      list-style: none;
+      margin-bottom: var(--space-6);
+    }
+    .pricing-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-2);
+      padding: var(--space-2) 0;
+      font-size: 0.8125rem;
+      color: var(--text-body);
+    }
+    .pricing-check {
+      color: var(--success);
+      font-weight: 600;
+      flex-shrink: 0;
+      font-size: 0.875rem;
+    }
+
+    .pricing-cta {
+      width: 100%;
+      font-family: var(--font-sans);
+      font-weight: 500;
+      font-size: 0.875rem;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--white);
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all var(--duration-normal) ease;
+      line-height: 1.5;
+    }
+    .pricing-cta:hover {
+      border-color: var(--gray-300);
+      background: var(--gray-50);
+    }
+    .pricing-card.featured .pricing-cta {
+      background: var(--brand);
+      color: var(--white);
+      border-color: var(--brand);
+    }
+    .pricing-card.featured .pricing-cta:hover {
+      background: var(--brand-hover);
+    }
+
+    /* ═══════════════════════════════════════════
+       11. FINAL CTA
+    ═══════════════════════════════════════════ */
+    .final-cta {
+      text-align: center;
+      padding: var(--space-24) var(--space-6);
+    }
+    .final-cta .section-title {
+      max-width: 520px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: var(--space-5);
+    }
+    .final-cta .section-subtitle {
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: var(--space-10);
+    }
+
+    /* ═══════════════════════════════════════════
+       12. FOOTER
+    ═══════════════════════════════════════════ */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: var(--space-8) 0;
+    }
+    .footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+    }
+    .footer-text {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+    }
+    .footer-links {
+      display: flex;
+      gap: var(--space-6);
+    }
+    .footer-links a {
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      transition: color var(--duration-fast) ease;
+    }
+    .footer-links a:hover { color: var(--gray-700); }
+
+    /* ═══════════════════════════════════════════
+       13. ANIMATIONS (respects reduced motion)
+    ═══════════════════════════════════════════ */
+    @media (prefers-reduced-motion: no-preference) {
+      @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+      @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0; }
+      }
+      .hero-badge .badge-pulse { animation: pulse-dot 2.5s ease-in-out infinite; }
+      .demo-cursor { animation: blink 1s step-end infinite; }
+      .demo-status-dot { animation: pulse-dot 2s ease-in-out infinite; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+      .reveal { opacity: 1; transform: none; }
+      .case-card.unfold-init { clip-path: none; opacity: 1; }
+    }
+
+    /* ═══════════════════════════════════════════
+       14. RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 768px) {
+      .hero { padding: var(--space-24) var(--space-4) var(--space-16); }
+      .hero-title { font-size: 2rem; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: 100%; max-width: 280px; text-align: center; }
+
+      .chart-wrapper { padding: var(--space-5); }
+      .chart-header { flex-direction: column; align-items: flex-start; }
+      .chart-stats { flex-direction: column; gap: var(--space-4); }
+
+      .section { padding: var(--space-16) 0; }
+      .section-subtitle { margin-bottom: var(--space-10); }
+
+      .problems-grid { grid-template-columns: 1fr; }
+
+      .timeline-step { padding-left: 44px; padding-bottom: var(--space-10); }
+
+      .case-card { padding: var(--space-8); }
+      .case-metrics { grid-template-columns: 1fr; gap: var(--space-3); }
+
+      .pricing-grid { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+
+      .final-cta { padding: var(--space-16) var(--space-4); }
+
+      .footer .container { flex-direction: column; text-align: center; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title { font-size: 1.75rem; }
+      .chart-canvas-container { aspect-ratio: 4 / 3; }
+      .demo-body { font-size: 0.875rem; padding: var(--space-4); }
+      .demo-meta { padding: var(--space-3) var(--space-4); }
+    }
+
+    /* ═══════════════════════════════════════════
+       15. UTILITIES
+    ═══════════════════════════════════════════ */
+    .text-center { text-align: center; }
+    .mx-auto { margin-left: auto; margin-right: auto; }
+
+    /* Divider between sections */
+    .section-divider {
+      height: 1px;
+      background: var(--border);
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════ NAVIGATION ═══════════════ -->
+  <nav class="nav" id="mainNav">
+    <div class="container">
+      <div class="nav-logo">KEEVA</div>
+      <a class="nav-cta" id="navCta" href="contacto.html" style="display:inline-block;">Empezar gratis</a>
+    </div>
+  </nav>
+
+  <!-- ═══════════════ HERO ═══════════════ -->
+  <section class="hero" id="hero">
+    <div class="hero-bg">
+      <div class="hero-bg-grid"></div>
+      <div class="hero-bg-glow"></div>
+    </div>
+
+    <div class="hero-badge">
+      <span class="badge-pulse"></span>
+      IA para equipos comerciales
+    </div>
+
+    <h1 class="hero-title">
+      Tu comercial se va.<br>
+      <span class="highlight">Su cuota, no.</span>
+    </h1>
+
+    <p class="hero-subtitle">
+      KEEVA aprende cómo trabaja cada comercial y actúa en su nombre durante vacaciones o bajas. La cuota del año no cae.
+    </p>
+
+    <div class="hero-actions">
+      <a class="btn-primary" href="contacto.html" style="display:inline-block;">Probar KEEVA gratis</a>
+      <a class="btn-secondary" href="#howItWorks" style="display:inline-block;">Ver cómo funciona</a>
+    </div>
+
+    <!-- Interactive Chart -->
+    <div class="chart-wrapper reveal scale-in" id="chartWrapper">
+      <div class="chart-header">
+        <span class="chart-title">Cuota de ventas mensual</span>
+        <div class="toggle-container">
+          <span class="toggle-label active" id="labelPresente">Presente</span>
+          <div class="toggle-track" id="absenceToggle" role="switch" aria-checked="false" tabindex="0" aria-label="Simular ausencia del comercial">
+            <div class="toggle-thumb"></div>
+          </div>
+          <span class="toggle-label" id="labelAusente">Ausente</span>
+        </div>
+      </div>
+      <div class="chart-canvas-container">
+        <canvas id="quotaChart"></canvas>
+      </div>
+      <div class="chart-legend">
+        <div class="chart-legend-item">
+          <span class="chart-legend-dot amber"></span>
+          Objetivo 100%
+        </div>
+        <div class="chart-legend-item" id="legendKeeva" style="opacity:0; transition: opacity 0.4s ease;">
+          <span class="chart-legend-dot teal"></span>
+          Con KEEVA
+        </div>
+        <div class="chart-legend-item" id="legendSin" style="opacity:0; transition: opacity 0.4s ease;">
+          <span class="chart-legend-dot rose"></span>
+          Sin KEEVA
+        </div>
+      </div>
+      <div class="chart-stats" id="chartStats">
+        <div class="chart-stat" id="statLoss">
+          <div class="chart-stat-value loss" id="statLossValue">−28%</div>
+          <div class="chart-stat-label">Cuota sin KEEVA</div>
+        </div>
+        <div class="chart-stat" id="statSafe">
+          <div class="chart-stat-value safe" id="statSafeValue">99%</div>
+          <div class="chart-stat-label">Cuota con KEEVA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ PROBLEM SECTION ═══════════════ -->
+  <section class="section problem-section" id="problems">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label">El problema</div>
+        <h2 class="section-title">Lo que pasa cuando<br>tu comercial desconecta</h2>
+        <p class="section-subtitle">Cada ausencia es un agujero silencioso en tu pipeline. Lo ves en los números al cierre de trimestre, cuando ya es tarde.</p>
+      </div>
+
+      <div class="problems-grid">
+        <div class="problem-card reveal" style="transition-delay: 0.05s">
+          <div class="problem-icon">🧠</div>
+          <h3>Contexto perdido</h3>
+          <p>Cada comercial lleva sus deals en la cabeza. Cuando se va, el contexto se va con él. El sustituto arranca en frío.</p>
+        </div>
+        <div class="problem-card reveal" style="transition-delay: 0.1s">
+          <div class="problem-icon">⏱️</div>
+          <h3>Ventas frenadas</h3>
+          <p>Los deals no esperan. Un lead sin respuesta en 48 horas busca otra opción. 3 semanas de vacaciones son una hemorragia.</p>
+        </div>
+        <div class="problem-card reveal" style="transition-delay: 0.15s">
+          <div class="problem-icon">🔗</div>
+          <h3>Continuidad rota</h3>
+          <p>El sustituto no conoce al cliente, no conoce el tono, no conoce los acuerdos previos. El cliente lo nota al instante.</p>
+        </div>
+        <div class="problem-card reveal" style="transition-delay: 0.2s">
+          <div class="problem-icon">📱</div>
+          <h3>Sin desconexión real</h3>
+          <p>Tu comercial "desconecta" pero sigue pendiente del móvil por si algo explota. Las vacaciones se convierten en guardia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ HOW IT WORKS ═══════════════ -->
+  <section class="section" id="howItWorks">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="section-label mx-auto" style="text-align:center">Cómo funciona</div>
+        <h2 class="section-title" style="text-align:center; max-width: 520px; margin-left: auto; margin-right: auto;">Cuatro pasos.<br>Cero fricción.</h2>
+        <p class="section-subtitle mx-auto" style="text-align:center; margin-bottom: var(--space-16);">KEEVA se integra en tu stack existente y aprende de cada interacción, sin configurar nada manualmente.</p>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <div class="timeline-line"></div>
+        <div class="timeline-progress" id="timelineProgress"></div>
+
+        <div class="timeline-step" data-step="1">
+          <div class="timeline-node"><div class="timeline-node-inner"></div></div>
+          <div class="timeline-step-number">Paso 01</div>
+          <h3>Escucha y aprende</h3>
+          <p>KEEVA analiza emails, llamadas y CRM de cada comercial. Aprende su tono, sus tácticas de cierre, los acuerdos con cada cliente. No es un template — es un clon de su estilo.</p>
+        </div>
+
+        <div class="timeline-step" data-step="2">
+          <div class="timeline-node"><div class="timeline-node-inner"></div></div>
+          <div class="timeline-step-number">Paso 02</div>
+          <h3>Detecta la ausencia</h3>
+          <p>Cuando un comercial marca vacaciones, baja o cualquier ausencia, KEEVA activa automáticamente su perfil de actuación. Sin configurar nada.</p>
+        </div>
+
+        <div class="timeline-step" data-step="3">
+          <div class="timeline-node"><div class="timeline-node-inner"></div></div>
+          <div class="timeline-step-number">Paso 03</div>
+          <h3>Actúa con su estilo</h3>
+          <p>Responde a clientes, gestiona seguimientos, mantiene deals calientes. Todo con el tono y las tácticas del comercial. El cliente no nota la diferencia.</p>
+        </div>
+
+        <div class="timeline-step" data-step="4">
+          <div class="timeline-node"><div class="timeline-node-inner"></div></div>
+          <div class="timeline-step-number">Paso 04</div>
+          <h3>Escala cuando hay riesgo</h3>
+          <p>Precio fuera de rango, condiciones especiales, un cliente difícil — KEEVA escala al manager o al propio comercial. Autonomía con control.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ═══════════════ LIVE DEMO ═══════════════ -->
+  <section class="section demo-section" id="demo">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="section-label mx-auto" style="text-align:center">En acción</div>
+        <h2 class="section-title" style="text-align:center; max-width: 520px; margin-left: auto; margin-right: auto;">Mira a KEEVA pensar</h2>
+        <p class="section-subtitle mx-auto" style="text-align:center; margin-bottom: var(--space-16);">Esto es lo que pasa cuando un cliente escribe y tu comercial está en la playa.</p>
+      </div>
+
+      <div class="demo-window reveal scale-in" id="demoWindow">
+        <div class="demo-titlebar">
+          <div class="demo-dot"></div>
+          <div class="demo-dot"></div>
+          <div class="demo-dot"></div>
+          <span class="demo-titlebar-text">KEEVA · Respuesta automática</span>
+        </div>
+        <div class="demo-status" id="demoStatus">
+          <div class="demo-status-dot" id="demoStatusDot"></div>
+          <span class="demo-status-text" id="demoStatusText">Esperando…</span>
+        </div>
+        <div class="demo-meta">
+          <div class="demo-meta-row">
+            <span class="demo-meta-label">Para:</span>
+            <span class="demo-meta-value">María García — Directora de Compras, TechCorp</span>
+          </div>
+          <div class="demo-meta-row">
+            <span class="demo-meta-label">Re:</span>
+            <span class="demo-meta-value">Propuesta comercial — Proyecto Q4</span>
+          </div>
+          <div class="demo-meta-row">
+            <span class="demo-meta-label">Estilo:</span>
+            <span class="demo-meta-value" style="color: var(--brand); font-family: var(--font-mono); font-size: 0.75rem;">Carlos Ruiz — perfil clonado ✓</span>
+          </div>
+        </div>
+        <div class="demo-body" id="demoBody">
+          <span class="demo-cursor" id="demoCursor"></span>
+        </div>
+        <div class="demo-footer">
+          <span class="demo-ai-badge">Generado por KEEVA</span>
+          <button class="demo-approve-btn" id="demoApproveBtn">✓ Aprobar y enviar</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ CASE STUDY ═══════════════ -->
+  <section class="case-section" id="caseStudy">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="section-label mx-auto" style="text-align:center">Caso real</div>
+        <h2 class="section-title" style="text-align:center; max-width: 520px; margin-left: auto; margin-right: auto; margin-bottom: var(--space-16);">Un deal que no se enfrió</h2>
+      </div>
+
+      <div class="case-card-container">
+        <div class="case-card unfold-init" id="caseCard">
+          <div class="case-card-shine" id="caseCardShine"></div>
+          <div class="case-eyebrow">Resultado verificado</div>
+          <h3>
+            <span class="case-amount">120.000 €</span> de deal cerrado mientras el comercial estaba de vacaciones
+          </h3>
+          <p class="case-body">
+            Deal con decisión prevista para agosto. El comercial se va 3 semanas de vacaciones. Sin KEEVA, el cliente habría esperado sin respuesta — con la competencia llamando a su puerta. Con KEEVA, los seguimientos continuaron con el tono y estilo exacto del comercial. El deal se cerró a los 8 días.
+          </p>
+          <div class="case-metrics">
+            <div class="case-metric">
+              <div class="case-metric-value" id="metricDays">8</div>
+              <div class="case-metric-label">Días hasta cierre</div>
+            </div>
+            <div class="case-metric">
+              <div class="case-metric-value" id="metricEmails">14</div>
+              <div class="case-metric-label">Emails gestionados</div>
+            </div>
+            <div class="case-metric">
+              <div class="case-metric-value" id="metricEscalations">2</div>
+              <div class="case-metric-label">Escalaciones</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ PRICING ═══════════════ -->
+  <section class="section pricing-section" id="pricing">
+    <div class="container">
+      <div class="text-center reveal">
+        <div class="section-label mx-auto" style="text-align:center">Planes</div>
+        <h2 class="section-title" style="text-align:center; max-width: 520px; margin-left: auto; margin-right: auto;">Elige tu escala</h2>
+        <p class="section-subtitle mx-auto" style="text-align:center;">Sin permanencia. Cancela cuando quieras. ROI desde el primer comercial que se va de vacaciones.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Starter -->
+        <div class="pricing-card reveal" style="transition-delay: 0.05s">
+          <div class="pricing-name">Starter</div>
+          <div class="pricing-desc">Para equipos pequeños que quieren probar.</div>
+          <div class="pricing-price">
+            <span class="pricing-currency">€</span>
+            <span class="pricing-amount">49</span>
+            <span class="pricing-period">/mes</span>
+          </div>
+          <div class="pricing-period-text">por comercial</div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> 1 perfil de comercial</li>
+            <li><span class="pricing-check">✓</span> Integración email</li>
+            <li><span class="pricing-check">✓</span> Respuestas automáticas</li>
+            <li><span class="pricing-check">✓</span> Reporting básico</li>
+            <li><span class="pricing-check">✓</span> Soporte por email</li>
+          </ul>
+          <a class="pricing-cta" href="contacto.html" style="display:inline-block; text-align:center;">Empezar gratis</a>
+        </div>
+
+        <!-- Team -->
+        <div class="pricing-card featured reveal" style="transition-delay: 0.1s">
+          <div class="pricing-badge">Más popular</div>
+          <div class="pricing-name">Team</div>
+          <div class="pricing-desc">Para equipos comerciales que no paran.</div>
+          <div class="pricing-price">
+            <span class="pricing-currency">€</span>
+            <span class="pricing-amount">149</span>
+            <span class="pricing-period">/mes</span>
+          </div>
+          <div class="pricing-period-text">hasta 10 comerciales</div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Hasta 10 perfiles</li>
+            <li><span class="pricing-check">✓</span> Todos los canales (email, chat, CRM)</li>
+            <li><span class="pricing-check">✓</span> Análisis avanzado de estilo</li>
+            <li><span class="pricing-check">✓</span> Dashboard de equipo</li>
+            <li><span class="pricing-check">✓</span> Escalaciones personalizables</li>
+            <li><span class="pricing-check">✓</span> Soporte prioritario</li>
+          </ul>
+          <a class="pricing-cta" href="contacto.html" style="display:inline-block; text-align:center;">Empezar gratis</a>
+        </div>
+
+        <!-- Business -->
+        <div class="pricing-card reveal" style="transition-delay: 0.15s">
+          <div class="pricing-name">Business</div>
+          <div class="pricing-desc">Para empresas con grandes fuerzas de venta.</div>
+          <div class="pricing-price">
+            <span class="pricing-currency">€</span>
+            <span class="pricing-amount">299</span>
+            <span class="pricing-period">/mes</span>
+          </div>
+          <div class="pricing-period-text">comerciales ilimitados</div>
+          <ul class="pricing-features">
+            <li><span class="pricing-check">✓</span> Comerciales ilimitados</li>
+            <li><span class="pricing-check">✓</span> Entrenamiento IA personalizado</li>
+            <li><span class="pricing-check">✓</span> API & webhooks</li>
+            <li><span class="pricing-check">✓</span> SSO & permisos avanzados</li>
+            <li><span class="pricing-check">✓</span> SLA de respuesta</li>
+            <li><span class="pricing-check">✓</span> Account manager dedicado</li>
+          </ul>
+          <a class="pricing-cta" href="contacto.html" style="display:inline-block; text-align:center;">Contactar ventas</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FINAL CTA ═══════════════ -->
+  <section class="final-cta" id="finalCta">
+    <div class="container">
+      <div class="reveal">
+        <div class="section-label" style="text-align:center">¿Listo?</div>
+        <h2 class="section-title" style="text-align:center; max-width: 520px; margin-left: auto; margin-right: auto;">Las próximas vacaciones de tu equipo no tienen que costar un trimestre</h2>
+        <p class="section-subtitle mx-auto" style="text-align:center; margin-bottom: var(--space-10);">Configura KEEVA en 15 minutos. Sin código. Sin fricción.</p>
+        <div style="text-align: center;">
+          <a class="btn-primary" href="contacto.html" style="display:inline-block; padding: var(--space-4) var(--space-8);">Empezar gratis →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════ FOOTER ═══════════════ -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-text">© 2026 KEEVA. Todos los derechos reservados.</div>
+      <div class="footer-links">
+        <a href="#pricing">Precios</a>
+        <a href="#">Privacidad</a>
+        <a href="#">Términos</a>
+        <a href="contacto.html">Contacto</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ═══════════════════════════════════════════
+       JAVASCRIPT — ALL INTERACTIVE FEATURES
+    ═══════════════════════════════════════════ */
+    (function() {
+      'use strict';
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* ─────────────── 1. NAVIGATION ─────────────── */
+      const nav = document.getElementById('mainNav');
+      window.addEventListener('scroll', () => {
+        nav.classList.toggle('scrolled', window.scrollY > 20);
+      }, { passive: true });
+
+      /* ─────────────── 2. INTERACTIVE CHART ─────────────── */
+      const canvas = document.getElementById('quotaChart');
+      const ctx = canvas.getContext('2d');
+      const toggle = document.getElementById('absenceToggle');
+      const labelPresente = document.getElementById('labelPresente');
+      const labelAusente = document.getElementById('labelAusente');
+      const legendKeeva = document.getElementById('legendKeeva');
+      const legendSin = document.getElementById('legendSin');
+      const statLoss = document.getElementById('statLoss');
+      const statSafe = document.getElementById('statSafe');
+
+      const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+      const normalData  = [95, 102, 98, 105, 100, 103, 100,  97, 102, 105,  98, 100];
+      const sinKeeva    = [95, 102, 98, 105, 100, 103,  42,  35,  55,  75,  85,  90];
+      const conKeeva    = [95, 102, 98, 105, 100, 103,  97,  95, 100, 104,  99, 101];
+
+      let absence = 0;
+      let targetAbsence = 0;
+      let animFrame = null;
+
+      // Brand colors for chart
+      const brandColor = '#3f51b5';
+      const dangerColor = '#dc2626';
+      const gridColor = 'rgba(0,0,0,0.04)';
+      const textColor = 'rgba(0,0,0,0.35)';
+
+      function resizeCanvas() {
+        const container = canvas.parentElement;
+        const dpr = window.devicePixelRatio || 1;
+        const rect = container.getBoundingClientRect();
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        canvas.style.width = rect.width + 'px';
+        canvas.style.height = rect.height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        drawChart();
+      }
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function getPoint(index, data, chartArea) {
+        const x = chartArea.left + (index / (data.length - 1)) * chartArea.width;
+        const y = chartArea.top + chartArea.height - ((data[index] / 120) * chartArea.height);
+        return { x, y };
+      }
+
+      function drawSmoothLine(points, color, lineWidth, dashed) {
+        if (points.length < 2) return;
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
+        ctx.lineJoin = 'round';
+        ctx.lineCap = 'round';
+        if (dashed) ctx.setLineDash([4, 3]);
+        else ctx.setLineDash([]);
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          const prev = points[i - 1];
+          const curr = points[i];
+          const cpx = (prev.x + curr.x) / 2;
+          ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+        }
+        ctx.stroke();
+      }
+
+      function drawAreaUnder(points, color, chartArea) {
+        if (points.length < 2) return;
+        ctx.beginPath();
+        ctx.moveTo(points[0].x, points[0].y);
+        for (let i = 1; i < points.length; i++) {
+          const prev = points[i - 1];
+          const curr = points[i];
+          const cpx = (prev.x + curr.x) / 2;
+          ctx.bezierCurveTo(cpx, prev.y, cpx, curr.y, curr.x, curr.y);
+        }
+        ctx.lineTo(points[points.length - 1].x, chartArea.top + chartArea.height);
+        ctx.lineTo(points[0].x, chartArea.top + chartArea.height);
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      }
+
+      function drawChart() {
+        const w = canvas.width / (window.devicePixelRatio || 1);
+        const h = canvas.height / (window.devicePixelRatio || 1);
+        ctx.clearRect(0, 0, w, h);
+
+        const chartArea = { left: 40, top: 16, width: w - 56, height: h - 48 };
+
+        // Grid
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 1;
+        ctx.setLineDash([]);
+        for (let i = 0; i <= 6; i++) {
+          const y = chartArea.top + (i / 6) * chartArea.height;
+          ctx.beginPath();
+          ctx.moveTo(chartArea.left, y);
+          ctx.lineTo(chartArea.left + chartArea.width, y);
+          ctx.stroke();
+        }
+
+        // Y-axis labels
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.fillStyle = textColor;
+        ctx.textAlign = 'right';
+        for (let i = 0; i <= 6; i++) {
+          const val = 120 - i * 20;
+          const y = chartArea.top + (i / 6) * chartArea.height;
+          ctx.fillText(val + '%', chartArea.left - 8, y + 4);
+        }
+
+        // X-axis labels
+        ctx.textAlign = 'center';
+        for (let i = 0; i < months.length; i++) {
+          const x = chartArea.left + (i / (months.length - 1)) * chartArea.width;
+          ctx.fillText(months[i], x, chartArea.top + chartArea.height + 18);
+        }
+
+        // 100% target
+        const targetY = chartArea.top + chartArea.height - (100 / 120) * chartArea.height;
+        ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, targetY);
+        ctx.lineTo(chartArea.left + chartArea.width, targetY);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Absence zone
+        if (absence > 0.05) {
+          const x1 = chartArea.left + (6 / 11) * chartArea.width - 12;
+          const x2 = chartArea.left + (8 / 11) * chartArea.width + 12;
+          ctx.fillStyle = `rgba(220, 38, 38, ${0.03 * absence})`;
+          ctx.fillRect(x1, chartArea.top, x2 - x1, chartArea.height);
+          ctx.font = 'bold 9px "JetBrains Mono", monospace';
+          ctx.fillStyle = `rgba(220, 38, 38, ${0.4 * absence})`;
+          ctx.textAlign = 'center';
+          ctx.fillText('AUSENCIA', (x1 + x2) / 2, chartArea.top + 14);
+        }
+
+        // Interpolated data
+        const currentSin = normalData.map((v, i) => lerp(v, sinKeeva[i], absence));
+        const currentCon = normalData.map((v, i) => lerp(v, conKeeva[i], absence));
+        const pointsSin = currentSin.map((_, i) => getPoint(i, currentSin, chartArea));
+        const pointsCon = currentCon.map((_, i) => getPoint(i, currentCon, chartArea));
+
+        // Fills
+        if (absence > 0.05) {
+          drawAreaUnder(pointsCon, `rgba(63, 81, 181, ${0.04 * absence})`, chartArea);
+          drawAreaUnder(pointsSin, `rgba(220, 38, 38, ${0.04 * absence})`, chartArea);
+        } else {
+          drawAreaUnder(pointsCon, 'rgba(63, 81, 181, 0.04)', chartArea);
+        }
+
+        // Lines
+        if (absence > 0.05) {
+          drawSmoothLine(pointsSin, `rgba(220, 38, 38, ${0.25 + 0.75 * absence})`, 1.5, true);
+          drawSmoothLine(pointsCon, `rgba(63, 81, 181, ${0.3 + 0.7 * absence})`, 2, false);
+        } else {
+          drawSmoothLine(pointsCon, 'rgba(63, 81, 181, 0.7)', 2, false);
+        }
+
+        // Dots
+        if (absence > 0.3) {
+          pointsSin.forEach((p, i) => {
+            if (i >= 6 && i <= 8) {
+              ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(220, 38, 38, ${absence})`; ctx.fill();
+            }
+          });
+          pointsCon.forEach((p, i) => {
+            if (i >= 6 && i <= 8) {
+              ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+              ctx.fillStyle = `rgba(63, 81, 181, ${absence})`; ctx.fill();
+            }
+          });
+        }
+      }
+
+      function animateChart() {
+        const diff = targetAbsence - absence;
+        if (Math.abs(diff) > 0.005) {
+          absence += diff * 0.08;
+          drawChart();
+          updateChartUI();
+          animFrame = requestAnimationFrame(animateChart);
+        } else {
+          absence = targetAbsence;
+          drawChart();
+          updateChartUI();
+          animFrame = null;
+        }
+      }
+
+      function updateChartUI() {
+        const isOn = absence > 0.5;
+        toggle.classList.toggle('on', isOn);
+        labelPresente.classList.toggle('active', !isOn);
+        labelAusente.classList.toggle('active', isOn);
+        legendKeeva.style.opacity = absence > 0.1 ? '1' : '0';
+        legendSin.style.opacity = absence > 0.1 ? '1' : '0';
+        if (absence > 0.3) {
+          statLoss.classList.add('visible');
+          statSafe.classList.add('visible');
+          document.getElementById('statLossValue').textContent = Math.round(lerp(100, 72, absence)) + '%';
+          document.getElementById('statSafeValue').textContent = Math.round(lerp(100, 99, absence)) + '%';
+        } else {
+          statLoss.classList.remove('visible');
+          statSafe.classList.remove('visible');
+        }
+      }
+
+      toggle.addEventListener('click', () => {
+        targetAbsence = targetAbsence < 0.5 ? 1 : 0;
+        toggle.setAttribute('aria-checked', targetAbsence > 0.5);
+        if (!animFrame && !prefersReducedMotion) animFrame = requestAnimationFrame(animateChart);
+        else if (prefersReducedMotion) { absence = targetAbsence; drawChart(); updateChartUI(); }
+      });
+      toggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); } });
+
+      let isDragging = false, dragStartX = 0, dragStartAbsence = 0;
+      toggle.addEventListener('pointerdown', (e) => { isDragging = true; dragStartX = e.clientX; dragStartAbsence = absence; toggle.setPointerCapture(e.pointerId); e.preventDefault(); });
+      toggle.addEventListener('pointermove', (e) => {
+        if (!isDragging) return;
+        targetAbsence = Math.max(0, Math.min(1, dragStartAbsence + (e.clientX - dragStartX) / 44));
+        if (!animFrame && !prefersReducedMotion) animFrame = requestAnimationFrame(animateChart);
+        else if (prefersReducedMotion) { absence = targetAbsence; drawChart(); updateChartUI(); }
+      });
+      toggle.addEventListener('pointerup', () => {
+        if (isDragging) {
+          isDragging = false;
+          targetAbsence = targetAbsence > 0.5 ? 1 : 0;
+          toggle.setAttribute('aria-checked', targetAbsence > 0.5);
+          if (!animFrame && !prefersReducedMotion) animFrame = requestAnimationFrame(animateChart);
+          else if (prefersReducedMotion) { absence = targetAbsence; drawChart(); updateChartUI(); }
+        }
+      });
+
+      window.addEventListener('resize', resizeCanvas);
+      resizeCanvas();
+
+      /* ─────────────── 3. TYPING SIMULATION ─────────────── */
+      const demoBody = document.getElementById('demoBody');
+      const demoCursor = document.getElementById('demoCursor');
+      const demoStatusText = document.getElementById('demoStatusText');
+      const demoStatusDot = document.getElementById('demoStatusDot');
+      const demoApproveBtn = document.getElementById('demoApproveBtn');
+
+      const typingText = `Hola María,\n\nGracias por tu interés en la propuesta que te envié la semana pasada. He revisado los términos que comentamos y puedo confirmarte que el descuento del 12% sobre el volumen anual sigue vigente hasta final de mes.\n\nRespecto a los plazos de entrega, podemos garantizar la primera fase para el 15 de octubre, tal como habíamos acordado.\n\n¿Te parece bien que agendemos una llamada el jueves para cerrar los últimos detalles?\n\nUn abrazo,\nCarlos`;
+
+      const statusPhases = [
+        { text: 'Analizando contexto del deal...', duration: 1800, color: 'brand' },
+        { text: 'Recuperando historial con María...', duration: 1500, color: 'brand' },
+        { text: 'Adaptando al estilo de Carlos Ruiz...', duration: 1200, color: 'brand' },
+        { text: 'Generando respuesta...', duration: 0, color: 'brand' },
+        { text: 'Esperando aprobación', duration: 0, color: 'green' },
+      ];
+
+      let demoStarted = false;
+
+      function startTypingDemo() {
+        if (demoStarted) return;
+        demoStarted = true;
+        let phaseIndex = 0, charIndex = 0;
+
+        function setStatus(phase) {
+          demoStatusText.textContent = phase.text;
+          if (phase.color === 'green') {
+            demoStatusText.classList.add('green');
+            demoStatusDot.classList.add('green');
+          } else {
+            demoStatusText.classList.remove('green');
+            demoStatusDot.classList.remove('green');
+          }
+        }
+
+        function advancePhase() {
+          if (phaseIndex < 3) {
+            setStatus(statusPhases[phaseIndex]);
+            phaseIndex++;
+            setTimeout(advancePhase, statusPhases[phaseIndex - 1].duration);
+          } else if (phaseIndex === 3) {
+            setStatus(statusPhases[3]);
+            phaseIndex++;
+            typeNext();
+          }
+        }
+
+        function typeNext() {
+          if (charIndex < typingText.length) {
+            const char = typingText[charIndex];
+            if (char === '\n') demoBody.insertBefore(document.createElement('br'), demoCursor);
+            else demoBody.insertBefore(document.createTextNode(char), demoCursor);
+            charIndex++;
+            let delay = 25 + Math.random() * 25;
+            if (char === '.' || char === ',' || char === '\n') delay = 80 + Math.random() * 80;
+            if (char === '?' || char === '!') delay = 120;
+            if (!prefersReducedMotion) setTimeout(typeNext, delay);
+            else {
+              const remaining = typingText.substring(charIndex);
+              remaining.split('\n').forEach((part, i, arr) => {
+                demoBody.insertBefore(document.createTextNode(part), demoCursor);
+                if (i < arr.length - 1) demoBody.insertBefore(document.createElement('br'), demoCursor);
+              });
+              charIndex = typingText.length;
+              finishTyping();
+            }
+          } else finishTyping();
+        }
+
+        function finishTyping() {
+          setStatus(statusPhases[4]);
+          demoCursor.style.display = 'none';
+          demoApproveBtn.classList.add('visible');
+        }
+        advancePhase();
+      }
+
+      /* ─────────────── 4. SCROLL REVEALS ─────────────── */
+      const revealElements = document.querySelectorAll('.reveal');
+      if (!prefersReducedMotion) {
+        const revealObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) { entry.target.classList.add('visible'); revealObserver.unobserve(entry.target); }
+          });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        revealElements.forEach(el => revealObserver.observe(el));
+      } else {
+        revealElements.forEach(el => el.classList.add('visible'));
+      }
+
+      /* ─────────────── 5. TIMELINE SCROLL ─────────────── */
+      const timeline = document.getElementById('timeline');
+      const timelineProgress = document.getElementById('timelineProgress');
+      const timelineSteps = document.querySelectorAll('.timeline-step');
+
+      if (!prefersReducedMotion) {
+        function updateTimeline() {
+          if (!timeline) return;
+          const rect = timeline.getBoundingClientRect();
+          const windowH = window.innerHeight;
+          const scrollProgress = Math.max(0, Math.min(1, (windowH * 0.5 - rect.top) / rect.height));
+          timelineProgress.style.height = (scrollProgress * rect.height) + 'px';
+          timelineSteps.forEach(step => {
+            const stepRect = step.getBoundingClientRect();
+            step.classList.toggle('active', stepRect.top + stepRect.height * 0.3 < windowH * 0.6);
+          });
+        }
+        window.addEventListener('scroll', updateTimeline, { passive: true });
+        updateTimeline();
+      } else {
+        timelineSteps.forEach(step => step.classList.add('active'));
+        timelineProgress.style.height = '100%';
+      }
+
+      /* ─────────────── 6. DEMO TRIGGER ─────────────── */
+      const demoWindow = document.getElementById('demoWindow');
+      if (demoWindow) {
+        const demoObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting && !demoStarted) { setTimeout(startTypingDemo, 500); demoObserver.unobserve(entry.target); }
+          });
+        }, { threshold: 0.3 });
+        demoObserver.observe(demoWindow);
+      }
+
+      /* ─────────────── 7. CASE STUDY 3D TILT + UNFOLD ─────────────── */
+      const caseCard = document.getElementById('caseCard');
+      const caseCardShine = document.getElementById('caseCardShine');
+
+      if (caseCard) {
+        const caseObserver = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              setTimeout(() => { caseCard.classList.remove('unfold-init'); caseCard.classList.add('unfold-animate'); }, 150);
+              caseObserver.unobserve(entry.target);
+              if (!prefersReducedMotion) {
+                setTimeout(() => {
+                  animateCounter('metricDays', 0, 8, 1000);
+                  animateCounter('metricEmails', 0, 14, 1200);
+                  animateCounter('metricEscalations', 0, 2, 700);
+                }, 600);
+              }
+            }
+          });
+        }, { threshold: 0.2 });
+        caseObserver.observe(caseCard);
+
+        if (!prefersReducedMotion && window.innerWidth > 768) {
+          caseCard.addEventListener('mousemove', (e) => {
+            const rect = caseCard.getBoundingClientRect();
+            const deltaX = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+            const deltaY = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+            caseCard.style.transform = `rotateX(${-deltaY * 4}deg) rotateY(${deltaX * 4}deg)`;
+            caseCardShine.style.setProperty('--shine-x', ((e.clientX - rect.left) / rect.width * 100) + '%');
+            caseCardShine.style.setProperty('--shine-y', ((e.clientY - rect.top) / rect.height * 100) + '%');
+          });
+          caseCard.addEventListener('mouseleave', () => {
+            caseCard.style.transform = 'rotateX(0) rotateY(0)';
+            caseCard.style.transition = 'transform 0.4s var(--ease-out)';
+            setTimeout(() => { caseCard.style.transition = 'transform 150ms ease-out, box-shadow 250ms ease'; }, 400);
+          });
+        }
+      }
+
+      /* ─────────────── 8. COUNTER ANIMATION ─────────────── */
+      function animateCounter(elementId, from, to, duration) {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        const start = performance.now();
+        function update(now) {
+          const progress = Math.min((now - start) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
+          el.textContent = Math.round(from + (to - from) * eased);
+          if (progress < 1) requestAnimationFrame(update);
+        }
+        requestAnimationFrame(update);
+      }
+
+      /* ─────────────── 9. APPROVE BUTTON ─────────────── */
+      if (demoApproveBtn) {
+        demoApproveBtn.addEventListener('click', () => {
+          demoApproveBtn.textContent = '✓ Enviado';
+          demoApproveBtn.style.background = '#059669';
+          demoApproveBtn.style.pointerEvents = 'none';
+          demoStatusText.textContent = 'Respuesta enviada a María García';
+          demoStatusText.style.color = '#059669';
+        });
+      }
+
+      /* ─────────────── 10. SMOOTH ANCHORS ─────────────── */
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      });
+
+    })();
+  </script>
+</body>
+</html>
